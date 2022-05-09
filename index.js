@@ -41,9 +41,18 @@ async function run() {
       const filter = { _id: ObjectId(id) };
       const options = { upsert: true };
 
+      let updateQuantity;
+
+      if(data.newQuantity) {
+        updateQuantity = data.newQuantity;
+      }
+      else {
+        updateQuantity = data.updateStock;
+      }
+
       const updateStock = {
         $set: {
-          quantity: data.newQuentity,
+          quantity: updateQuantity
         }
       }
 
