@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 
 const app = express();
@@ -25,6 +25,30 @@ async function run() {
         const cursor = inventoryItemsCollection.find(query);
         const inventoryItems = await cursor.toArray();
         res.send(inventoryItems);
+    });
+
+    app.get('/inventory/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const inventoryItems = await inventoryItemsCollection.findOne(query);
+      res.send(inventoryItems);
+    });
+
+    // Update inventory stock
+    app.put('/inventory/:id', async (req, res) => {
+      const id = req.params.id;
+      const data = req.body;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+
+      const updateStock = {
+        $set: {
+          quantity: data.newQuentity,
+        }
+      }
+
+      const result = await inventoryItemsCollection.updateOne(filter, updateStock, options);
+      res.send(result);
     });
   }
   finally {
