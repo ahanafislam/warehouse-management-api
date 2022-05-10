@@ -34,6 +34,13 @@ async function run() {
       res.send(inventoryItems);
     });
 
+    // Add inventory item
+    app.post('/inventory', async (req, res) => {
+      const newItem = req.body;
+      const result = await inventoryItemsCollection.insertOne(newItem);
+      res.send(result);
+    });
+
     // Update inventory stock
     app.put('/inventory/:id', async (req, res) => {
       const id = req.params.id;
@@ -58,6 +65,14 @@ async function run() {
 
       const result = await inventoryItemsCollection.updateOne(filter, updateStock, options);
       res.send(result);
+    });
+
+    // Delete Inventory Item API
+    app.delete('/inventory/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await inventoryItemsCollection.deleteOne(query);
+        res.send(result);
     });
   }
   finally {
