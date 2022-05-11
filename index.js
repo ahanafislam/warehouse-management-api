@@ -33,6 +33,7 @@ async function run() {
   try {
     await client.connect();
     const inventoryItemsCollection = client.db("ashbab").collection("inventoryItems");
+    const newProductsCollection = client.db("ashbab").collection("newProducts");
 
     // Getnarate Auth token
     app.post('/get_auth_token', async (req, res) => {
@@ -112,6 +113,14 @@ async function run() {
         const query = { _id: ObjectId(id) };
         const result = await inventoryItemsCollection.deleteOne(query);
         res.send(result);
+    });
+
+    // Get New Product List
+    app.get('/newProducts', async (req, res) => {
+      const query = {};
+      const cursor = newProductsCollection.find(query);
+      const inventoryItems = await cursor.toArray();
+      res.send(inventoryItems);
     });
   }
   finally {
